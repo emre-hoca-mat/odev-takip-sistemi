@@ -6,13 +6,13 @@ import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(
-    page_title="Emre Kaya-Özel Ders Ödev Takip Sistemi",
+    page_title="Özel Ders & Günlük Ödev Takip Sistemi",
     page_icon="📝",
     layout="wide",
 )
 
 # Öğretmen Giriş Şifresi
-OGRETMEN_SIFRESI = "35Da0474"
+OGRETMEN_SIFRESI = "1234"
 
 SUTUNLAR_ODEV = [
     "Öğrenci",
@@ -111,7 +111,10 @@ if query_ogrenci and query_ogrenci in tum_ogrenciler:
 
   col_s1, col_s2 = st.columns([2, 1])
   with col_s1:
-    st.info(f"👋 Hoş geldin **{secilen_ogrenci}**! Günlük ödevlerini buradan takip edebilirsin.")
+    st.info(
+        f"👋 Hoş geldin **{secilen_ogrenci}**! Günlük ödevlerini buradan takip"
+        " edebilirsin."
+    )
   with col_s2:
     secilen_tarih = st.date_input("📅 Tarih Seçin:", date.today())
 
@@ -172,7 +175,7 @@ else:
   )
 
   # ------------------------------------------
-  # 2A: GENEL ÖĞRENCİ MODU (TÜM ÖĞRENCİ LİSTESİNDEN SEÇİM)
+  # 2A: GENEL ÖĞRENCİ MODU
   # ------------------------------------------
   if kullanici_rolu == "🎓 Genel Öğrenci Modu":
     st.title("🎓 Öğrenci Günlük Ödev Portalı")
@@ -568,14 +571,25 @@ else:
 
         with col_o2:
           st.subheader("🔗 Öğrenciye Özel Giriş Linkleri")
-          st.caption("Aşağıdaki özel linkleri kopyalayıp sadece ilgili öğrenciye gönderebilirsiniz. Öğrenci bu linkle girdiğinde sadece kendi ödevlerini görür.")
+          st.caption(
+              "Aşağıdaki özel linkleri kopyalayıp ilgili öğrenciye"
+              " gönderebilirsiniz. Öğrenci bu linkle girdiğinde SADECE kendi"
+              " ödevlerini görür."
+          )
 
+          # Tarayıcıdaki mevcut site adresini dinamik al
+          # (Streamlit Cloud adresi otomatik oluşur)
           if tum_ogrenciler:
             for ogr in tum_ogrenciler:
               encoded_name = urllib.parse.quote(ogr)
-              # Streamlit Cloud adresi veya yerel adres
-              link = f"https://odev-takip.streamlit.app/?ogrenci={encoded_name}"
-              st.text_input(f"📌 {ogr} Özel Giriş Linki:", value=link, key=f"link_input_{ogr}")
+              # Öğrencinin özel yönlendirme linki
+              ogrenci_linki = f"https://odev-takip.streamlit.app/?ogrenci={encoded_name}"
+
+              st.text_input(
+                  f"📌 {ogr} Özel Giriş Linki:",
+                  value=ogrenci_linki,
+                  key=f"link_input_{ogr}",
+              )
           else:
             st.info("Kayıtlı öğrenci bulunmuyor.")
 
