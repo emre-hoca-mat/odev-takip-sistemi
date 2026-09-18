@@ -94,7 +94,7 @@ df_odev = odevleri_yukle()
 df_ogrenci = ogrencileri_yukle()
 df_ders = dersleri_yukle()
 
-# Eksik sütun kontrolü
+# --- EKSİK SÜTUN KONTROLÜ VE TİP UYUŞMAZLIĞI (LossySetitemError) ÇÖZÜMÜ ---
 for s in SUTUNLAR_ODEV:
   if s not in df_odev.columns:
     df_odev[s] = (
@@ -102,14 +102,21 @@ for s in SUTUNLAR_ODEV:
         if s in ["Doğru", "Yanlış", "Boş"]
         else (0.0 if s in ["Net", "Başarı (%)"] else "-")
     )
+  # Metin olması gerekenleri zorla 'object' yapıyoruz
+  if s in ["Öğrenci", "Konu", "Durum", "Tarih"]:
+    df_odev[s] = df_odev[s].astype(object)
 
 for s in SUTUNLAR_OGRENCI:
   if s not in df_ogrenci.columns:
     df_ogrenci[s] = "-"
+  # Telefon numarası vb. sayı algılanırsa çökmeyi engellemek için metin ('object') tipine zorluyoruz
+  df_ogrenci[s] = df_ogrenci[s].astype(object)
 
 for s in SUTUNLAR_DERS:
   if s not in df_ders.columns:
     df_ders[s] = "-"
+  df_ders[s] = df_ders[s].astype(object)
+# ---------------------------------------------------------------------------
 
 kayitli_isimler = (
     list(df_ogrenci["Öğrenci Adı"].dropna().unique())
